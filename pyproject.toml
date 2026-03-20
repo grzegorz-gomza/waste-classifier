@@ -1,0 +1,35 @@
+[project]
+name = "WasteClassifier"
+version = "0.1.0"
+description = "AI Assessment project for Unit 5 Artificial Intelligence"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "dagshub>=0.6.5",
+    "dvc>=3.66.1",
+    "ensure>=1.0.4",
+    "joblib>=1.5.3",
+    "kaggle>=2.0.0",
+    "mlflow>=3.9.0",
+    "pytest>=9.0.2",
+    "python-box>=7.3.2",
+    "pyyaml>=6.0.3",
+    "scikit-learn>=1.8.0",
+    "seaborn>=0.13.2",
+    "tqdm>=4.67.3",
+    "types-pyyaml>=6.0.12.20250915",
+    "xgboost>=3.2.0",
+    "torch",
+    "torchvision",
+    "timm>=1.0.24",
+    "scikit-image>=0.26.0",
+]
+
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch" }
+torchvision = { index = "pytorch" }

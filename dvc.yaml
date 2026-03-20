@@ -1,0 +1,97 @@
+vars:
+  - config/config.yaml
+
+stages:
+  01_data_ingestion:
+    cmd: PYTHONPATH=src uv run python -m WasteClassifier.pipeline.deep_learning.stage_01_data_ingestion
+    deps:
+      - src/WasteClassifier/pipeline/deep_learning/stage_01_data_ingestion.py
+      - src/WasteClassifier/components/share/data_ingestion.py
+      - config/config.yaml
+    outs:
+      - ${data_ingestion.root_dir}
+
+  02_prepare_models:
+    cmd: PYTHONPATH=src uv run python -m WasteClassifier.pipeline.deep_learning.stage_02_prepare_models
+    deps:
+      - src/WasteClassifier/pipeline/deep_learning/stage_02_prepare_models.py
+      - src/WasteClassifier/components/deep_learning/prepare_base_model.py
+      - config/config.yaml
+      - params.yaml
+    params:
+      - IMAGE_SIZE
+      - CLASSES
+      - PRETRAINED
+      - FREEZE_BASE
+      - DL_MODELS
+    outs:
+      - ${prepare_base_model.root_dir}
+
+  03_train_dl_models:
+    cmd: PYTHONPATH=src uv run python -m WasteClassifier.pipeline.deep_learning.stage_03_train
+    deps:
+      - src/WasteClassifier/pipeline/deep_learning/stage_03_train.py
+      - src/WasteClassifier/components/deep_learning/train.py
+      - src/WasteClassifier/components/visualization/plot_artifacts.py
+      - src/WasteClassifier/utils/mlflow_utils.py
+      - ${prepare_base_model.root_dir}
+      - ${data_ingestion.root_dir}
+      - config/config.yaml
+      - params.yaml
+    params:
+      - IMAGE_SIZE
+      - BATCH_SIZE
+      - TEST_SPLIT
+      - AUGMENTATION
+      - DL_MODELS
+      - LEARNING_RATE
+      - EPOCHS
+      - OPTIMIZER
+      - WEIGHT_DECAY
+    outs:
+      - ${train_dl_model.root_dir}
+
+  04_train_ml_models:
+    cmd: PYTHONPATH=src uv run python -m WasteClassifier.pipeline.machine_learning.stage_03_train_ml
+    deps:
+      - src/WasteClassifier/pipeline/machine_learning/stage_03_train_ml.py
+      - src/WasteClassifier/components/machine_learning/train_xgb.py
+      - src/WasteClassifier/components/machine_learning/vectorize_images.py
+      - src/WasteClassifier/components/visualization/plot_artifacts.py
+      - src/WasteClassifier/utils/mlflow_utils.py
+      - ${data_ingestion.root_dir}
+      - config/config.yaml
+      - params.yaml
+    params:
+      - IMAGE_SIZE
+      - TEST_SPLIT
+      - XGB_RANDOM_STATE
+      - XGB_NUM_BOOST_ROUND
+      - XGB_MAX_DEPTH
+      - XGB_ETA
+      - XGB_SUBSAMPLE
+      - XGB_COLSAMPLE_BYTREE
+      - XGB_OBJECTIVE
+      - XGB_EVAL_METRIC
+    outs:
+      - ${train_ml_model.root_dir}
+
+  05_evaluate_models:
+    cmd: PYTHONPATH=src uv run python -m WasteClassifier.pipeline.stage_05_evaluate_models
+    deps:
+      - src/WasteClassifier/pipeline/stage_05_evaluate_models.py
+      - src/WasteClassifier/components/evaluation/evaluate_models.py
+      - src/WasteClassifier/components/visualization/plot_artifacts.py
+      - src/WasteClassifier/utils/mlflow_utils.py
+      - ${data_ingestion.root_dir}
+      - ${train_dl_model.root_dir}
+      - ${train_ml_model.root_dir}
+      - config/config.yaml
+      - params.yaml
+    metrics:
+      - artifacts/metrics/combined_metrics.json:
+          cache: false
+    outs:
+      - ${evaluation.root_dir}
+      - ${tracking.runs_root_dir}
+      - artifacts/reports

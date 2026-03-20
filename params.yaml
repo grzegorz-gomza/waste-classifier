@@ -1,0 +1,41 @@
+# Image preprocessing
+IMAGE_SIZE: [224, 224, 3]
+BATCH_SIZE: 64
+TEST_SPLIT: 0.2
+
+# Data augmentation
+AUGMENTATION: True
+RANDOM_FLIP: True
+RANDOM_ROTATION: 0.3
+RANDOM_ZOOM: 0.3
+RANDOM_CONTRAST: 0.3
+RANDOM_BRIGHTNESS: 0.3
+
+# Deep Learning Models
+DL_MODELS:
+  - resnet50
+  - mobilenet_v2
+  - efficientnet_b0
+
+# Training parameters for all models
+PRETRAINED: True
+FREEZE_BASE: True
+LEARNING_RATE: 0.0005
+EPOCHS: 2
+OPTIMIZER: 'adamw'
+WEIGHT_DECAY: 0.01
+
+# Classes (30 waste categories)
+CLASSES: 30
+
+# Machine Learning (XGBoost)
+XGB_RANDOM_STATE: 42
+XGB_NUM_BOOST_ROUND: 50
+XGB_MAX_DEPTH: 10
+XGB_ETA: 0.3
+XGB_SUBSAMPLE: 0.8
+XGB_COLSAMPLE_BYTREE: 0.8
+XGB_BATCH_SIZE: 500
+XGB_OBJECTIVE: multi:softprob
+XGB_EVAL_METRIC: mlogloss
+XGB_TRAIN_DATA_FRACTION: 1.0

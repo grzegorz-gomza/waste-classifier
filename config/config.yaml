@@ -1,0 +1,54 @@
+# Author: Grzegorz Gomza
+# Date: February 2026
+# References:
+# 
+# Configuration file for Waste Classifier pipeline
+# This file defines all paths and parameters for the waste classification pipeline
+
+# Main artifacts directory
+artifacts_root: artifacts
+
+# Stage 01 Data Ingestion
+data_ingestion:
+  root_dir: artifacts/data_ingestion
+  source_url: "alistairking/recyclable-and-household-waste-classification"
+  local_data_file: artifacts/data_ingestion/data.zip
+  unzip_dir: artifacts/data_ingestion
+
+# Deep Learning Stages
+# Stage 02 Base model preparation
+prepare_base_model:
+  root_dir: artifacts/prepare_base_model
+  base_model_path: artifacts/prepare_base_model/base_model.pth
+  updated_base_model_path: artifacts/prepare_base_model/model.pth
+
+# Stage 03 Train DL model
+train_dl_model:
+  root_dir: artifacts/training_dl
+  trained_model_path: artifacts/training_dl/model.pth
+
+# Shared Stages
+# Stage 04 Evaluation
+evaluation:
+  root_dir: artifacts/evaluation
+  dl_model_path: artifacts/training_dl/model.pth
+  test_data_path: artifacts/data_ingestion
+  dl_metrics_path: artifacts/evaluation/dl_metrics.json
+
+# Experiment Tracking (MLflow)
+tracking:
+  enabled: true
+  tracking_uri: null
+  experiment_name: WasteClassifier
+  runs_root_dir: artifacts/mlflow_runs
+
+# Visualization (optional)
+visualization:
+  enabled: true
+  dpi: 300
+
+# Machine Learning Stages
+# Stage 04 Train ML model (XGBoost)
+train_ml_model:
+  root_dir: artifacts/training_ml
+  trained_model_path: artifacts/training_ml/xgboost_model.json

@@ -1,0 +1,40 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# IDE
+.vscode/
+
+# Frontend
+app/frontend/node_modules/
+app/frontend/build/
+
+# my_files
+artifacts/
+log_msgs/
+artifacts/data_ingestion
+mlflow.db
+*.log
+.dvc
+mlruns/
+.kaggle/
+report/
+*.pdf
+*.zip
+*.ipynb
+_enhancements/
+.windsurf
+Chest_Cancer_Classification_MLOps/
+HCS_502_Grzegorz_Gomza_Assessment_Intermediate_Design.pdf
+HCS_502_Grzegorz_Gomza_Assessment_Report.pdf
+HCS_502_Grzegorz_Gomza_Assessment.zip
+
+# Pytest
+.pytest_cache/

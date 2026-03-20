@@ -1,0 +1,251 @@
+schema: '2.0'
+stages:
+  01_data_ingestion:
+    cmd: PYTHONPATH=src uv run python -m 
+      WasteClassifier.pipeline.deep_learning.stage_01_data_ingestion
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: 998df7c34918a3c598e7ff82325f4493
+      size: 1282
+    - path: src/WasteClassifier/components/share/data_ingestion.py
+      hash: md5
+      md5: 5940685d47753b67eef3d7626e4cbc33
+      size: 2840
+    - path: 
+        src/WasteClassifier/pipeline/deep_learning/stage_01_data_ingestion.py
+      hash: md5
+      md5: a558daa2e01bad69485a243e738387c4
+      size: 1190
+    outs:
+    - path: artifacts/data_ingestion
+      hash: md5
+      md5: c31d19e19094614b4fdb8350ed563296.dir
+      size: 1929913812
+      nfiles: 15002
+  02_prepare_models:
+    cmd: PYTHONPATH=src uv run python -m 
+      WasteClassifier.pipeline.deep_learning.stage_02_prepare_models
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: 998df7c34918a3c598e7ff82325f4493
+      size: 1282
+    - path: params.yaml
+      hash: md5
+      md5: 578b4b91a4a30c1eae931ccc122f3ceb
+      size: 747
+    - path: src/WasteClassifier/components/deep_learning/prepare_base_model.py
+      hash: md5
+      md5: 0c6ba2f03a0cd0ed9543f84556efb004
+      size: 5722
+    - path: 
+        src/WasteClassifier/pipeline/deep_learning/stage_02_prepare_models.py
+      hash: md5
+      md5: 6434a830c4db79ad2d88b528f1cc5785
+      size: 1215
+    params:
+      params.yaml:
+        CLASSES: 30
+        DL_MODELS:
+        - resnet50
+        - mobilenet_v2
+        - efficientnet_b0
+        FREEZE_BASE: true
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+        PRETRAINED: true
+    outs:
+    - path: artifacts/prepare_base_model
+      hash: md5
+<<<<<<< HEAD
+      md5: db846efa46072baa1a7893b9354badd1.dir
+=======
+      md5: 77e0bc8e62ebfd30371a54c56eb6b827.dir
+>>>>>>> fe048415 (finished)
+      size: 283780286
+      nfiles: 6
+  03_train_dl_models:
+    cmd: PYTHONPATH=src uv run python -m 
+      WasteClassifier.pipeline.deep_learning.stage_03_train
+    deps:
+    - path: artifacts/data_ingestion
+      hash: md5
+      md5: c31d19e19094614b4fdb8350ed563296.dir
+      size: 1929913812
+      nfiles: 15002
+    - path: artifacts/prepare_base_model
+      hash: md5
+      md5: db846efa46072baa1a7893b9354badd1.dir
+      size: 283780286
+      nfiles: 6
+    - path: config/config.yaml
+      hash: md5
+      md5: 998df7c34918a3c598e7ff82325f4493
+      size: 1282
+    - path: params.yaml
+      hash: md5
+      md5: 578b4b91a4a30c1eae931ccc122f3ceb
+      size: 747
+    - path: src/WasteClassifier/components/deep_learning/train.py
+      hash: md5
+      md5: a0df1cf3dbe6f31693aca5c35bcf2219
+      size: 17550
+    - path: src/WasteClassifier/components/visualization/plot_artifacts.py
+      hash: md5
+      md5: a788b608f2b72f976de1d03696ab0b13
+      size: 8029
+    - path: src/WasteClassifier/pipeline/deep_learning/stage_03_train.py
+      hash: md5
+      md5: 801d3c7caded322d5ce35f59a52bd0cc
+      size: 1408
+    - path: src/WasteClassifier/utils/mlflow_utils.py
+      hash: md5
+      md5: 593b912cba2ec010d98a8f8b887497a5
+      size: 3244
+    params:
+      params.yaml:
+        AUGMENTATION: true
+        BATCH_SIZE: 64
+        DL_MODELS:
+        - resnet50
+        - mobilenet_v2
+        - efficientnet_b0
+        EPOCHS: 2
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+        LEARNING_RATE: 0.0005
+        OPTIMIZER: adamw
+        TEST_SPLIT: 0.2
+        WEIGHT_DECAY: 0.01
+    outs:
+    - path: artifacts/training_dl
+      hash: md5
+      md5: 3994275f9b0f7765905c3aa05eb2b515.dir
+      size: 250357732
+      nfiles: 4
+  04_train_ml_models:
+    cmd: PYTHONPATH=src uv run python -m 
+      WasteClassifier.pipeline.machine_learning.stage_03_train_ml
+    deps:
+    - path: artifacts/data_ingestion
+      hash: md5
+      md5: c31d19e19094614b4fdb8350ed563296.dir
+      size: 1929913812
+      nfiles: 15002
+    - path: config/config.yaml
+      hash: md5
+      md5: 998df7c34918a3c598e7ff82325f4493
+      size: 1282
+    - path: params.yaml
+      hash: md5
+      md5: 578b4b91a4a30c1eae931ccc122f3ceb
+      size: 747
+    - path: src/WasteClassifier/components/machine_learning/train_xgb.py
+      hash: md5
+      md5: 57ea8fbe9ea04a962aec122a6b26d337
+      size: 9533
+    - path: src/WasteClassifier/components/machine_learning/vectorize_images.py
+      hash: md5
+      md5: 320227044d478f69be8bb3cec1b0b4f2
+      size: 895
+    - path: src/WasteClassifier/components/visualization/plot_artifacts.py
+      hash: md5
+      md5: a788b608f2b72f976de1d03696ab0b13
+      size: 8029
+    - path: src/WasteClassifier/pipeline/machine_learning/stage_03_train_ml.py
+      hash: md5
+      md5: c6031dfc8e9633d26559f231aba60f94
+      size: 1131
+    - path: src/WasteClassifier/utils/mlflow_utils.py
+      hash: md5
+      md5: 593b912cba2ec010d98a8f8b887497a5
+      size: 3244
+    params:
+      params.yaml:
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+        TEST_SPLIT: 0.2
+        XGB_COLSAMPLE_BYTREE: 0.8
+        XGB_ETA: 0.3
+        XGB_EVAL_METRIC: mlogloss
+        XGB_MAX_DEPTH: 10
+        XGB_NUM_BOOST_ROUND: 50
+        XGB_OBJECTIVE: multi:softprob
+        XGB_RANDOM_STATE: 42
+        XGB_SUBSAMPLE: 0.8
+    outs:
+    - path: artifacts/training_ml
+      hash: md5
+      md5: b930798dee296362133c96614da6a397.dir
+      size: 9482715
+      nfiles: 1
+  05_evaluate_models:
+    cmd: PYTHONPATH=src uv run python -m 
+      WasteClassifier.pipeline.stage_05_evaluate_models
+    deps:
+    - path: artifacts/data_ingestion
+      hash: md5
+      md5: c31d19e19094614b4fdb8350ed563296.dir
+      size: 1929913812
+      nfiles: 15002
+    - path: artifacts/training_dl
+      hash: md5
+      md5: 3994275f9b0f7765905c3aa05eb2b515.dir
+      size: 250357732
+      nfiles: 4
+    - path: artifacts/training_ml
+      hash: md5
+      md5: 2b3a257c7c2e3d8a23afcde5c2b10953.dir
+      size: 1228789
+      nfiles: 1
+    - path: config/config.yaml
+      hash: md5
+      md5: 998df7c34918a3c598e7ff82325f4493
+      size: 1282
+    - path: params.yaml
+      hash: md5
+      md5: 578b4b91a4a30c1eae931ccc122f3ceb
+      size: 747
+    - path: src/WasteClassifier/components/evaluation/evaluate_models.py
+      hash: md5
+      md5: 9adf707e0b9d557e485c217043a22c4d
+      size: 10002
+    - path: src/WasteClassifier/components/visualization/plot_artifacts.py
+      hash: md5
+      md5: a788b608f2b72f976de1d03696ab0b13
+      size: 8029
+    - path: src/WasteClassifier/pipeline/stage_05_evaluate_models.py
+      hash: md5
+      md5: e4b5d5aa327849b31d153e722144d186
+      size: 1357
+    - path: src/WasteClassifier/utils/mlflow_utils.py
+      hash: md5
+      md5: 593b912cba2ec010d98a8f8b887497a5
+      size: 3244
+    outs:
+    - path: artifacts/evaluation
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+    - path: artifacts/metrics/combined_metrics.json
+      hash: md5
+      md5: 588991f8a74b27b98ff15627e50994d4
+      size: 650
+    - path: artifacts/mlflow_runs
+      hash: md5
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+    - path: artifacts/reports
+      hash: md5
+      md5: 5b1dd5758887e536a45f46dbb926d79c.dir
+      size: 3493016
+      nfiles: 8
